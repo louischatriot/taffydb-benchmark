@@ -36,22 +36,8 @@ module.exports.getConfiguration = function () {
 
   d = new TAFFY();
 
-  return { n: n, d: d, program: program };
+  return { n: n, d: d };
 }
-
-
-/**
- * Ensure the workspace exists and the db datafile is empty
- */
-module.exports.prepareDb = function (filename, cb) {
-  customUtils.ensureDirectoryExists(path.dirname(filename), function () {
-    fs.exists(filename, function (exists) {
-      if (exists) {
-        fs.unlink(filename, cb);
-      } else { return cb(); }
-    });
-  });
-};
 
 
 /**
@@ -79,7 +65,7 @@ module.exports.getRandomArray = getRandomArray;
 
 
 /**
- * Insert a certain number of documents for testing
+ * Insert documents
  */
 module.exports.insertDocs = function (d, n, profiler, cb) {
   var beg = new Date()
@@ -96,16 +82,14 @@ module.exports.insertDocs = function (d, n, profiler, cb) {
     }
 
     d.insert({ docNumber: order[i] });
-      executeAsap(function () {
-        runFrom(i + 1);
-      });
+    executeAsap(function () { runFrom(i + 1); });
   }
   runFrom(0);
 };
 
 
 /**
- * Find documents with find
+ * Find documents
  */
 module.exports.findDocs = function (d, n, profiler, cb) {
   var beg = new Date()
@@ -121,38 +105,8 @@ module.exports.findDocs = function (d, n, profiler, cb) {
       return cb();
     }
 
-    d({ docNumber: order[i] }).count();
-      executeAsap(function () {
-        runFrom(i + 1);
-      });
-  }
-  runFrom(0);
-};
-
-
-/**
- * Find documents with findOne
- */
-module.exports.findOneDocs = function (d, n, profiler, cb) {
-  var beg = new Date()
-    , order = getRandomArray(n)
-    ;
-
-  profiler.step("FindingOne " + n + " documents");
-
-  function runFrom(i) {
-    if (i === n) {   // Finished
-      console.log("===== RESULT (findOne) ===== " + Math.floor(1000* n / profiler.elapsedSinceLastStep()) + " ops/s");
-      profiler.step('Finished finding ' + n + ' docs');
-      return cb();
-    }
-
-    d.findOne({ docNumber: order[i] }, function (err, doc) {
-      if (!doc || doc.docNumber !== order[i]) { return cb('One find didnt work'); }
-      executeAsap(function () {
-        runFrom(i + 1);
-      });
-    });
+    d({ docNumber: order[i] }).count();  // Call count to make sure the docs were actually found, shouldn't impact the benchmark result
+    executeAsap(function () { runFrom(i + 1); });
   }
   runFrom(0);
 };
@@ -160,9 +114,8 @@ module.exports.findOneDocs = function (d, n, profiler, cb) {
 
 /**
  * Update documents
- * options is the same as the options object for update
  */
-module.exports.updateDocs = function (options, d, n, profiler, cb) {
+module.exports.updateDocs = function (d, n, profiler, cb) {
   var beg = new Date()
     , order = getRandomArray(n)
     ;
@@ -176,11 +129,9 @@ module.exports.updateDocs = function (options, d, n, profiler, cb) {
       return cb();
     }
 
-    // Will not actually modify the document but will take the same time
+    // Will not actually modify the document but this would take the same time if we were
     d({ docNumber: order[i] }).update({ docNumber: order[i] });
-      executeAsap(function () {
-        runFrom(i + 1);
-      });
+    executeAsap(function () { runFrom(i + 1); });
   }
   runFrom(0);
 };
@@ -188,9 +139,8 @@ module.exports.updateDocs = function (options, d, n, profiler, cb) {
 
 /**
  * Remove documents
- * options is the same as the options object for update
  */
-module.exports.removeDocs = function (options, d, n, profiler, cb) {
+module.exports.removeDocs = function (d, n, profiler, cb) {
   var beg = new Date()
     , order = getRandomArray(n)
     ;
@@ -199,48 +149,19 @@ module.exports.removeDocs = function (options, d, n, profiler, cb) {
 
   function runFrom(i) {
     if (i === n) {   // Finished
-      console.log("===== RESULT (remove) ===== " + Math.floor(1000* n / profiler.elapsedSinceLastStep()) + " ops/s");
+      console.log("===== RESULT (1 remove + 1 insert) ===== " + Math.floor(1000* n / profiler.elapsedSinceLastStep()) + " ops/s");
+      console.log("====== IMPORTANT: Please note that this is the time that was needed to perform " + n + " removes and " + n + " inserts");
+      console.log("====== The extra inserts are needed to keep collection size at " + n + " items for the benchmark to make sense");
+      console.log("====== Use the insert speed logged above to calculate the actual remove speed");
       profiler.step('Finished removing ' + n + ' docs');
       return cb();
     }
 
     d({ docNumber: order[i] }).remove();
-      d.insert({ docNumber: order[i] });
-                                                           // So actually we're calculating the average time taken by one insert + one remove
-        executeAsap(function () {
-          runFrom(i + 1);
-        });
+    d.insert({ docNumber: order[i] });
+    executeAsap(function () { runFrom(i + 1); });
   }
   runFrom(0);
 };
-
-
-/**
- * Load database
- */
-module.exports.loadDatabase = function (d, n, profiler, cb) {
-  var beg = new Date()
-    , order = getRandomArray(n)
-    ;
-
-  profiler.step("Loading the database " + n + " times");
-
-  function runFrom(i) {
-    if (i === n) {   // Finished
-      console.log("===== RESULT ===== " + Math.floor(1000* n / profiler.elapsedSinceLastStep()) + " ops/s");
-      profiler.step('Finished loading a database' + n + ' times');
-      return cb();
-    }
-
-    d.loadDatabase(function (err) {
-      executeAsap(function () {
-        runFrom(i + 1);
-      });
-    });
-  }
-  runFrom(0);
-};
-
-
 
 

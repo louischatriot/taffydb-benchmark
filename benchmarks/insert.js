@@ -11,7 +11,7 @@ var TAFFY = require('../taffy').taffy
 async.waterfall([
   function (cb) {
     n = 2 * n;   // We will actually insert twice as many documents
-                 // because the index is slower when the collection is already
+                 // because inserting is slower when the collection is already
                  // big. So the result given by the algorithm will be a bit worse than
                  // actual performance
     cb();

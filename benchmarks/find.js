@@ -20,19 +20,3 @@ async.waterfall([
   if (err) { return console.log("An error was encountered: ", err); }
 });
 
-
-  //var d = TAFFY();
-
-  //d.insert({ name: "NYC" });
-  //d.insert({ name: "Boston" });
-  //d.insert({ name: "SF" });
-  //d.insert({ name: "Boston" });
-
-  //console.log(d({ name: "Boston" }).count());
-  //console.log(d({ name: "Texas" }).count());
-
-
-//d({ name: "Boston" }).update({ name: "Texas" });
-
-  //console.log(d({ name: "Boston" }).count());
-  //console.log(d({ name: "Texas" }).count());
