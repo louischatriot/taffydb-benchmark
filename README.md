@@ -1,6 +1,6 @@
 # TaffyDB benchmark
 
-This benchmark is used to compare <a href="https://github.com/louischatriot/nedb" target="_blank">NeDB</a> to <a href="http://www.taffydb.com/" target="_blank">TaffyDB 2.7</a> (latest version). I use the same code I use to benchmark NeDB, with the necessary adaptations. Also, since TaffyDB doesn't support persistence, I benchmark it against an in-memory-only NeDB (`-m` options in the NeDB benchmarks), which is why the NeDB numbers for inserts, updates and removes are higher here than on the NeDB readme.
+This benchmark is used to compare <a href="https://github.com/louischatriot/nedb" target="_blank">NeDB</a> to <a href="http://www.taffydb.com/" target="_blank">TaffyDB 2.7</a> (latest version). I use the same code I use to benchmark NeDB, with the necessary adaptations. Also, since server-side TaffyDB doesn't support persistence, I benchmark it against an in-memory-only NeDB (`-m` options in the NeDB benchmarks), which is why the NeDB numbers for inserts, updates and removes are higher here than on the NeDB readme.
 
 
 ## Results
