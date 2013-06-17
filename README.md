@@ -2,6 +2,8 @@
 
 This benchmark is used to compare <a href="https://github.com/louischatriot/nedb" target="_blank">NeDB</a> to <a href="http://www.taffydb.com/" target="_blank">TaffyDB 2.7</a> (latest version). I use the same code I use to benchmark NeDB, with the necessary adaptations. Also, since server-side TaffyDB doesn't support persistence, I benchmark it against an in-memory-only NeDB (`-m` options in the NeDB benchmarks), which is why the NeDB numbers for inserts, updates and removes are higher here than on the NeDB readme.
 
+You need to `npm install` the dependencies to run the benchmarks. Use the `-n` option to specify dataset size (default: 10,000), for example `node benchmarks/find.js -n 5000` will run the benchmark with a collection of 5000 documents.
+
 
 ## Results
 
