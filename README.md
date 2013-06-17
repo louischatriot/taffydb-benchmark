@@ -15,7 +15,7 @@ NeDB is much faster than TaffyDB on all operations except insert:
 
 ## Interpretation
 
-We see that insert speeds are comparable but TaffyDB is much slower on operations that require to find documents (find, update, remove). That's because TaffyDB doesn't use indexing while NeDB does. In exchange for slightly slower insertions (very small impact nonetheless), we get much faster lookups. When NeDB is used in-memory and without indexes, it is comparable to TaffyDB (only about 10% faster).
+We see that insert speeds are comparable but TaffyDB is much slower on operations that require to find documents (find, update, remove). That's because TaffyDB doesn't use indexing while NeDB does (using self-balancing binary search trees). In exchange for slightly slower insertions (very small impact), we get much faster lookups. When NeDB is used in-memory and without indexes, it is comparable to TaffyDB (only about 10% faster).
 
 Another benefit of indexing is that it can be used at no cost to enfore a unique constraint on a field. In NeDB, unique indexes are exactly as fast as normal indexes so there is no performance drop. With Taffy you would need to scan the entire collection on every insert and update, so the performance would drop a bit on updates and tremendously on inserts (I didn't run any benchmark but my guess is that inserts would become about as slow as updates).
 
